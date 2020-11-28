@@ -16,10 +16,23 @@ class MongoController:
 
         except pymongo.errors.DuplicateKeyError:
             print ("Skipping Addition, key exists")
+    def create_all(self, repo_list):
+        try: 
+            self.collection.insert_many(repo_list)
+            print("Repos Added")
+        except pymongo.errors.BulkWriteError:
+            print("Addition Failed, One or more keys exists, try updating")
 
     def read(self):
         repos = list(self.collection.find())
         print(repos, "\n Found {n} repos".format(n=len(repos)))
+        return repos
+    
+    def read_one(self, id):
+        repo_id = {"_id": id}
+        repo = self.collection.find_one(repo_id)
+        print (repo)
+        
 
     def delete(self, id):
         self.collection.delete_one({"_id": id})
